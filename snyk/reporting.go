@@ -2,6 +2,7 @@ package snyk
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 )
 
@@ -102,8 +103,8 @@ type ListReportingIssuesRequest struct {
 // ListLatestIssues lists the latest issues.
 func (s *ReportingService) ListLatestIssues(ctx context.Context, req ListReportingIssuesRequest) (*ListReportingIssuesResponse, *Response, error) {
 	q := url.Values{
-		"page":    {string(req.Page)},
-		"perPage": {string(req.PerPage)},
+		"page":    {fmt.Sprint(req.Page)},
+		"perPage": {fmt.Sprint(req.PerPage)},
 		"sortBy":  {req.SortBy},
 		"order":   {req.Order},
 		"groupBy": {req.GroupBy},
