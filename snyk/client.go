@@ -21,6 +21,10 @@ const (
 	headerSnykRequestID = "snyk-request-id"
 )
 
+type Logger interface {
+	Log(...any)
+}
+
 // A Client manages communication with the Snyk API.
 type Client struct {
 	httpClient *http.Client
@@ -28,6 +32,9 @@ type Client struct {
 	baseURL   *url.URL // base URL for API requests.
 	userAgent string
 	token     string
+
+	logger      Logger
+	logRequests bool
 
 	common service // reuse a single struct instead of allocating one for each service on the heap.
 
@@ -64,6 +71,20 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 func WithUserAgent(userAgent string) ClientOption {
 	return func(client *Client) {
 		client.userAgent = userAgent
+	}
+}
+
+// WithLogger configures Client to use a specific logger
+func WithLogger(logger Logger) ClientOption {
+	return func(client *Client) {
+		client.logger = logger
+	}
+}
+
+// WithLogRequests configures Client to log requests
+func WithLogRequests(logRequests bool) ClientOption {
+	return func(client *Client) {
+		client.logRequests = logRequests
 	}
 }
 
@@ -139,6 +160,10 @@ type Response struct {
 // Do sends an API request and returns the API response.
 func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
 	req = req.WithContext(ctx)
+	if c.logRequests {
+		c.logger.Log("header", req.Header, "url", req.URL, "method", req.Method, "body", req.Body)
+	}
+
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		// if we got an error and the context has been canceled, the context's error is more useful.
