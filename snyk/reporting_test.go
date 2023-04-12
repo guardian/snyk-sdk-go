@@ -92,7 +92,7 @@ func TestReporting_ListLatestIssues(t *testing.T) {
 	expectedID := "e8feca4a-4ebc-494f-80d9-f8b0532188da"
 
 	req := ListReportingIssuesRequest{}
-	response, _, err := client.Reporting.ListLatestIssues(ctx, req)
+	response, _, err := client.Reporting.ListLatestIssues(ctx, "test-id", req)
 	if err != nil {
 		t.Fatalf("expected no error, got %s", err)
 	}

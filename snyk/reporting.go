@@ -2,6 +2,7 @@ package snyk
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 )
@@ -55,10 +56,10 @@ type ListReportingIssue struct {
 		CWE   []string `json:"CWE"`
 		OSVDB []string `json:"OSVDB"`
 	}
-	Credit        []string `json:"credit"`
-	CVSSv3        string   `json:"CVSSv3"`
-	PriorityScore int      `json:"priorityScore"`
-	CVSSScore     float64  `json:"CVSSScore"`
+	Credit        []string    `json:"credit"`
+	CVSSv3        string      `json:"CVSSv3"`
+	PriorityScore int         `json:"priorityScore"`
+	CVSSScore     json.Number `json:"cvssScore"`
 	Patches       []struct {
 		ID               string   `json:"id"`
 		ModificationTime string   `json:"modificationTime"`
@@ -101,7 +102,7 @@ type ListReportingIssuesRequest struct {
 }
 
 // ListLatestIssues lists the latest issues.
-func (s *ReportingService) ListLatestIssues(ctx context.Context, req ListReportingIssuesRequest) (*ListReportingIssuesResponse, *Response, error) {
+func (s *ReportingService) ListLatestIssues(ctx context.Context, organizationID string, req ListReportingIssuesRequest) (*ListReportingIssuesResponse, *Response, error) {
 	q := url.Values{
 		"page":    {fmt.Sprint(req.Page)},
 		"perPage": {fmt.Sprint(req.PerPage)},
@@ -109,7 +110,12 @@ func (s *ReportingService) ListLatestIssues(ctx context.Context, req ListReporti
 		"order":   {req.Order},
 		"groupBy": {req.GroupBy},
 	}
-	cr, err := s.client.NewRequest("POST", reportingBasePath+"/issues/latest?"+q.Encode(), nil)
+	body := map[string]any{
+		"filters": map[string]any{
+			"orgs": []string{organizationID},
+		},
+	}
+	cr, err := s.client.NewRequest("POST", reportingBasePath+"/issues/latest?"+q.Encode(), body)
 	if err != nil {
 		return nil, nil, err
 	}
