@@ -103,12 +103,21 @@ type ListReportingIssuesRequest struct {
 
 // ListLatestIssues lists the latest issues.
 func (s *ReportingService) ListLatestIssues(ctx context.Context, organizationID string, req ListReportingIssuesRequest) (*ListReportingIssuesResponse, *Response, error) {
-	q := url.Values{
-		"page":    {fmt.Sprint(req.Page)},
-		"perPage": {fmt.Sprint(req.PerPage)},
-		"sortBy":  {req.SortBy},
-		"order":   {req.Order},
-		"groupBy": {req.GroupBy},
+	q := url.Values{}
+	if req.Page != 0 {
+		q.Set("page", fmt.Sprint(req.Page))
+	}
+	if req.PerPage != 0 {
+		q.Set("perPage", fmt.Sprint(req.PerPage))
+	}
+	if req.GroupBy != "" {
+		q.Set("groupBy", req.GroupBy)
+	}
+	if req.Order != "" {
+		q.Set("order", req.Order)
+	}
+	if req.SortBy != "" {
+		q.Set("sortBy", req.SortBy)
 	}
 	body := map[string]any{
 		"filters": map[string]any{
