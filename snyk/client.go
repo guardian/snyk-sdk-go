@@ -231,7 +231,10 @@ func CheckResponse(resp *Response) error {
 	if err == nil && len(data) > 0 {
 		err := json.Unmarshal(data, &errorResponse.ErrorElement)
 		if err != nil {
-			return err
+			// If we can't unmarshal the data into an error, just return the raw data
+			errorResponse.ErrorElement.Message = string(data)
+			errorResponse.ErrorElement.Code = resp.StatusCode
+			return errorResponse
 		}
 	}
 	return errorResponse
