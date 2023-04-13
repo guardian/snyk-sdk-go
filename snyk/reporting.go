@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"time"
 )
 
 const reportingBasePath = "v1/reporting"
@@ -125,6 +126,44 @@ func (s *ReportingService) ListLatestIssues(ctx context.Context, organizationID 
 		},
 	}
 	cr, err := s.client.NewRequest("POST", reportingBasePath+"/issues/latest?"+q.Encode(), body)
+	if err != nil {
+		return nil, nil, err
+	}
+	issuesResp := new(ListReportingIssuesResponse)
+	resp, err := s.client.Do(ctx, cr, issuesResp)
+	if err != nil {
+		return nil, resp, err
+	}
+	return issuesResp, resp, nil
+}
+
+// ListIssues lists issues by time window.
+func (s *ReportingService) ListIssues(ctx context.Context, organizationID string, from, to time.Time, req ListReportingIssuesRequest) (*ListReportingIssuesResponse, *Response, error) {
+	q := url.Values{
+		"from": []string{from.Format("2006-01-02")},
+		"to":   []string{to.Format("2006-01-02")},
+	}
+	if req.Page != 0 {
+		q.Set("page", fmt.Sprint(req.Page))
+	}
+	if req.PerPage != 0 {
+		q.Set("perPage", fmt.Sprint(req.PerPage))
+	}
+	if req.GroupBy != "" {
+		q.Set("groupBy", req.GroupBy)
+	}
+	if req.Order != "" {
+		q.Set("order", req.Order)
+	}
+	if req.SortBy != "" {
+		q.Set("sortBy", req.SortBy)
+	}
+	body := map[string]any{
+		"filters": map[string]any{
+			"orgs": []string{organizationID},
+		},
+	}
+	cr, err := s.client.NewRequest("POST", reportingBasePath+"/issues/?"+q.Encode(), body)
 	if err != nil {
 		return nil, nil, err
 	}
