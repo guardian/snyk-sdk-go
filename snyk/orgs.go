@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
+	"time"
 )
 
 const orgBasePath = "org"
@@ -90,4 +93,70 @@ func (s *OrgsService) Delete(ctx context.Context, organizationID string) (*Respo
 	}
 
 	return s.client.Do(ctx, req, nil)
+}
+
+// OrganizationMember is the same as User, but includes a Role and doesn't include a list of organizations.
+type OrganizationMember struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Role     string `json:"role"`
+}
+
+// ListMembers provides a list of all members in an organization.
+func (s *OrgsService) ListMembers(ctx context.Context, orgID string, includeGroupAdmins bool) ([]OrganizationMember, *Response, error) {
+	urlStr := fmt.Sprintf("org/%s/members", orgID)
+	if includeGroupAdmins {
+		urlStr += "?includeGroupAdmins=true"
+	}
+	req, err := s.client.NewRequest(http.MethodGet, urlStr, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var members []OrganizationMember
+	resp, err := s.client.Do(ctx, req, &members)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return members, resp, nil
+}
+
+type PendingProvision struct {
+	Email        string     `json:"email"`
+	Role         string     `json:"role"`
+	RolePublicID string     `json:"rolePublicId"`
+	Created      *time.Time `json:"created"`
+}
+
+type ListPendingUserProvisionsOptions struct {
+	PerPage int
+	Page    int
+}
+
+// ListPendingUserProvisions provides a list of all pending user provisions in an organization.
+func (s *OrgsService) ListPendingUserProvisions(ctx context.Context, orgID string, opts ListPendingUserProvisionsOptions) ([]PendingProvision, *Response, error) {
+	urlStr := fmt.Sprintf("org/%s/provision?", orgID)
+	vals := url.Values{}
+	if opts.PerPage > 0 {
+		vals["perPage"] = []string{strconv.Itoa(opts.PerPage)}
+	}
+	if opts.Page > 0 {
+		vals["page"] = []string{strconv.Itoa(opts.Page)}
+	}
+	urlStr += vals.Encode()
+	req, err := s.client.NewRequest(http.MethodGet, urlStr, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var provisions []PendingProvision
+	resp, err := s.client.Do(ctx, req, &provisions)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return provisions, resp, nil
 }
