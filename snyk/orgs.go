@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 const orgBasePath = "org"
@@ -124,10 +125,10 @@ func (s *OrgsService) ListMembers(ctx context.Context, orgID string, includeGrou
 }
 
 type PendingProvision struct {
-	Email        string `json:"email"`
-	Role         string `json:"role"`
-	RolePublicID string `json:"rolePublicId"`
-	Created      string `json:"created"`
+	Email        string     `json:"email"`
+	Role         string     `json:"role"`
+	RolePublicID string     `json:"rolePublicId"`
+	Created      *time.Time `json:"created"`
 }
 
 type ListPendingUserProvisionsOptions struct {
