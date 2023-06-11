@@ -11,11 +11,19 @@ const projectBasePath = "org/%v/projects"
 // ProjectsService handles communication with the project related methods of the Snyk API.
 type ProjectsService service
 
+type Tag struct {
+	Key   string `json:"key,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
 // Project represents a Snyk project.
 type Project struct {
 	ID     string `json:"id,omitempty"`
 	Name   string `json:"name,omitempty"`
 	Origin string `json:"origin,omitempty"`
+	// IssueCountsBySeverity is a map of the number of issues by severity.
+	IssueCountsBySeverity map[string]int `json:"issueCountsBySeverity,omitempty"`
+	Tags                  []Tag          `json:"tags,omitempty"`
 }
 
 type projectsRoot struct {
