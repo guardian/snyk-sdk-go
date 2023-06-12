@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - nt/guardianise
   workflow_dispatch:
 
 jobs:
