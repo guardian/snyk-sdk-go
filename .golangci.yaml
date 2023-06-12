@@ -14,7 +14,7 @@ linters:
 
 linters-settings:
   goimports:
-    local-prefixes: github.com/pavel-snyk/snyk-sdk-go
+    local-prefixes: github.com/guardian/snyk-sdk-go
 
 output:
   format: tab

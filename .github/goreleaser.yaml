@@ -27,5 +27,5 @@ changelog:
 
 release:
   github:
-    owner: cloudquery
+    owner: guardian
     name: snyk-sdk-go

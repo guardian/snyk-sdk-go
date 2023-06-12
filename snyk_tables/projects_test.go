@@ -24,7 +24,19 @@ func TestProject_List(t *testing.T) {
     {
       "id": "e8feca4a-4ebc-494f-80d9-f8b0532188da",
       "name": "test-org/test-project",
-      "origin": "github"
+      "origin": "github",
+			"issueCountsBySeverity": {
+        "low": 8,
+        "medium": 15,
+        "high": 10,
+        "critical": 3
+      },
+			"tags": [
+        {
+          "key": "example-tag-key",
+          "value": "example-tag-value"
+        }
+      ]
     }
   ]
 }
@@ -35,6 +47,17 @@ func TestProject_List(t *testing.T) {
 			ID:     "e8feca4a-4ebc-494f-80d9-f8b0532188da",
 			Name:   "test-org/test-project",
 			Origin: "github",
+			IssueCountsBySeverity: map[string]int{
+				"low":      8,
+				"medium":   15,
+				"high":     10,
+				"critical": 3,
+			},
+			Tags: []Tag{
+				{Key: "example-tag-key",
+					Value: "example-tag-value",
+				},
+			},
 		},
 	}
 
