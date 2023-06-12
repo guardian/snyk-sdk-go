@@ -1,4 +1,4 @@
-module github.com/guardian/snyk-sdk-go/tools
+module github.com/pavel-snyk/snyk-sdk-go/tools
 
 go 1.18
 
