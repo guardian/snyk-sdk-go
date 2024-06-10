@@ -1,4 +1,8 @@
-# Snyk SDK for Go
+# Deprecation notice
+
+**As the Guardian no longer maintains its own Snyk CloudQuery plugin, this SDK is no longer needed**
+
+## Snyk SDK for Go
 
 [![Build](https://img.shields.io/github/workflow/status/guardian/snyk-sdk-go/Build?label=unit+tests)](https://github.com/guardian/snyk-sdk-go/actions/workflows/tests.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/guardian/snyk-sdk-go)](https://goreportcard.com/report/github.com/guardian/snyk-sdk-go)
